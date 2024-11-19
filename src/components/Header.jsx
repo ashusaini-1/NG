@@ -1,8 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
     const [activeSubmenu, setActiveSubmenu] = useState(null);
+    const [isMobileView, setIsMobileView] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+
+    // Check for mobile view
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobileView(window.innerWidth <= 768);
+        };
+
+        // Initial check
+        handleResize();
+
+        // Add resize listener
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const toggleSubmenu = (index) => {
+        if (!isMobileView) {
+            setActiveSubmenu(activeSubmenu === index ? null : index);
+        }
+    };
+
 
     const handleMouseEnter = (index) => {
         setActiveSubmenu(index);
@@ -55,7 +79,7 @@ const Header = () => {
                                 <Link to={item.path} className="nav-link">
                                     {item.name}
                                 </Link>
-                                {activeSubmenu === index && (
+                                {(!isMobileView && activeSubmenu === index) && (
                                     <div
                                         className="submenu"
                                         style={{
@@ -70,17 +94,17 @@ const Header = () => {
                                         <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
                                             <li style={{ margin: '5px 0' }}>
                                                 <Link to={`${item.path}/sub1`} className="nav-link text-white">
-                                                    Submenu 
+                                                    Submenu
                                                 </Link>
                                             </li>
                                             <li style={{ margin: '5px 0' }}>
                                                 <Link to={`${item.path}/sub2`} className="nav-link text-white">
-                                                    Submenu 
+                                                    Submenu
                                                 </Link>
                                             </li>
                                             <li style={{ margin: '5px 0' }}>
                                                 <Link to={`${item.path}/sub3`} className="nav-link text-white">
-                                                    Submenu 
+                                                    Submenu
                                                 </Link>
                                             </li>
                                         </ul>
