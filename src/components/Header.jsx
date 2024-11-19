@@ -1,32 +1,19 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
     const [activeSubmenu, setActiveSubmenu] = useState(null);
     const [isMobileView, setIsMobileView] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-
-    // Check for mobile view
     useEffect(() => {
         const handleResize = () => {
             setIsMobileView(window.innerWidth <= 768);
         };
 
-        // Initial check
         handleResize();
-
-        // Add resize listener
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    const toggleSubmenu = (index) => {
-        if (!isMobileView) {
-            setActiveSubmenu(activeSubmenu === index ? null : index);
-        }
-    };
-
 
     const handleMouseEnter = (index) => {
         setActiveSubmenu(index);
@@ -36,10 +23,33 @@ const Header = () => {
         setActiveSubmenu(null);
     };
 
+    const loadRazorpay = () => {
+        const options = {
+            key: "rzp_test_43yqE4W0vdNuQj", // Replace with your Razorpay key
+            amount: 50000, // Amount in paise (e.g., 50000 = 500 INR)
+            currency: "INR",
+            name: "Your Company Name",
+            description: "Donation",
+            handler: function (response) {
+                alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+            },
+            prefill: {
+                name: "Donor Name",
+                email: "donor@example.com",
+                contact: "9876543210",
+            },
+            theme: {
+                color: "#3399cc",
+            },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+    };
+
     const menuItems = [
         { name: 'Home', path: '/' },
         { name: 'How It Works', path: '/how-it-works' },
-        { name: 'Donate', path: '/donate' },
         { name: 'Gallery', path: '/gallery' },
         { name: 'Blog', path: '/blog' },
         { name: 'About', path: '/about-us' },
@@ -74,45 +84,19 @@ const Header = () => {
                                 key={index}
                                 onMouseEnter={() => handleMouseEnter(index)}
                                 onMouseLeave={handleMouseLeave}
-                                style={{ position: 'relative' }}
                             >
                                 <Link to={item.path} className="nav-link">
                                     {item.name}
                                 </Link>
-                                {(!isMobileView && activeSubmenu === index) && (
-                                    <div
-                                        className="submenu"
-                                        style={{
-                                            position: 'absolute',
-                                            left: 0,
-                                            backgroundColor: '#343a40',
-                                            padding: '20px',
-                                            borderRadius: '5px',
-                                            zIndex: 1000,
-                                        }}
-                                    >
-                                        <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
-                                            <li style={{ margin: '5px 0' }}>
-                                                <Link to={`${item.path}/sub1`} className="nav-link text-white">
-                                                    Submenu
-                                                </Link>
-                                            </li>
-                                            <li style={{ margin: '5px 0' }}>
-                                                <Link to={`${item.path}/sub2`} className="nav-link text-white">
-                                                    Submenu
-                                                </Link>
-                                            </li>
-                                            <li style={{ margin: '5px 0' }}>
-                                                <Link to={`${item.path}/sub3`} className="nav-link text-white">
-                                                    Submenu
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
                             </li>
                         ))}
                     </ul>
+                    <button
+                        className="btn btn-primary ml-3"
+                        onClick={loadRazorpay}
+                    >
+                        Donate with Razorpay
+                    </button>
                 </div>
             </div>
         </nav>
